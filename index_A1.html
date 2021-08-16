@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html>
+  <title>Engineering Coordination: A1 Horizontal & Vertical Enlargements</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+  <link rel="icon" type="image/png" href="https://github.com/NYCDOB/EssentialActiveConstruction/blob/gh-pages/images/logo.png">
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+  <link href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css' rel='stylesheet' type='text/css'/>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.1.1/css/rowGroup.dataTables.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.12/r-2.1.0/se-1.2.0/datatables.min.css">
+  <style>
+.dataTables_wrapper .dataTables_processing {
+  background: white;
+  color: #0000ff !important;
+  font-size: 24px;
+  border: 1px solid #28387c !important;
+  border-radius: 3px;
+  height: 75px !important;
+}
+
+
+.tooltipheading{
+color:yellow;
+font-size:18px;
+text-align:center;
+text-decoration: underline overline yellow;
+display:block;
+}
+.filterTableButton {
+	margin-right:5px;
+}
+#riskTable_info{
+	font-weight:bolder !important;
+}
+.row{
+	padding-top: 50px;
+}
+body {
+	background-color: white;
+}
+.jobno{
+	margin-left: 20px;
+}
+#map {
+	height: 100%;
+	width: 100%;
+	background-color: #333;
+	pointer-events: all;
+}
+#table-container{
+	height: 890px;
+	width: 100%;
+	display: block;
+	background-color: white;
+}
+#img{
+	float: left;
+	height: 35px;
+	margin-left: 10px;
+	padding-right: 10px;
+}
+
+.zoomedPoint {
+	stroke-width:1px !important;
+	stroke:red !important;
+	fill: red !important;
+	border: 1px double red !important;
+	background-color: red !important;
+	fill-opacity: 1;
+	r: 2 !important;
+}
+.eMbl2 i{
+cursor:pointer;
+font-size:18px;
+margin-left:-5px;margin-top:-5px;
+}
+* [class*='Cat'] :not(circle){
+	color:white !important;
+	font-weight: 900 !important;
+	font-size:1.5em !important;
+	border:solid grey 1px;
+	text-align: center;
+}
+#riskTable{
+	height: 100%;
+	font-size: 11px;
+}
+th { font-size: 12px; }
+td.details-control {
+	background: url('https://datatables.net/examples/resources/details_open.png') no-repeat center center;
+}
+tr.shown td.details-control {
+	background: url('https://datatables.net/examples/resources/details_close.png') no-repeat center center;
+}
+tr[role="row"]:hover td {
+	background-color: #e8e8e8;
+	cursor: pointer;
+}
+.logo{
+	background-image: url('https://nycdob.github.io/EssentialActiveConstruction/images/dob_logo_white.png');
+	background-repeat: no-repeat;
+	background-position: center;
+	float: right;
+	background-size: 70px;
+	height: 50px;
+	width: 70px;	
+}
+<!-- .ui { -->
+	<!-- top: 10px; -->
+	<!-- left: 50px; -->
+	<!-- padding: 8px; -->
+	<!-- position: absolute; -->
+	<!-- background-color: #fff; -->
+	<!-- border: 2px solid #707070; -->
+	<!-- border-radius: 7px; -->
+	<!-- width: 175px; -->
+<!-- } -->
+.point{
+	fill: #2d80ad;
+	fill-opacity: .7;
+}
+<!-- .tooltip { -->
+	<!-- visibility: hidden; -->
+	<!-- z-index: 1000 !important; -->
+	<!-- font-weight: bold; -->
+	<!-- padding: 15px; -->
+	<!-- border: 2px solid white; -->
+	<!-- border-radius: 7px;  -->
+	<!-- box-shadow: 0px 0px 2px 0px #a6a6a6;  -->
+	<!-- opacity: 1;  -->
+	<!-- position: absolute; -->
+	<!-- top: 10px; -->
+	<!-- left: 50%; -->
+	<!-- color:black; -->
+	<!-- background-color:RGB(227,227,227);	 -->
+	<!-- max-height:250px; -->
+	<!-- overflow-y:auto; -->
+<!-- } -->
+.tooltip {
+	color: #222;
+	background: #fff;
+	padding: .5em;
+	text-shadow: #f5f5f5 0 1px 0;
+	border-radius: 7px; 
+	box-shadow: 0px 0px 2px 0px #a6a6a6; 
+	opacity: 0.9; 
+	position: absolute;
+	visibility: hidden;
+}
+.dataTables_empty {
+  display:none;
+}
+.asofDate{
+	font-size:16px;
+}
+
+.dataTables_wrapper .dataTables_processing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 50px;
+  background-color: #fff;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  margin-left: -100px;
+  margin-top: 100px;
+  text-align: center;
+  padding: 1em 0;
+  z-index: 1;
+}
+@media( max-width:1200px){
+	.dobmain	{
+		padding-top:50px;
+	}
+	.ui{
+		visibility:hidden;
+	}
+
+}
+.navbar-nav>li>a:hover{
+	background-color:#cccccc;
+}
+
+
+.ui{
+	top: 10px;
+	left: 50px;
+	padding: 10px;
+	position: absolute;
+	background-color: #fff;
+	border: 2px solid #707070;
+	border-radius: 7px;
+	width: 250px;
+}
+.dataTables_filter input { width: 150px }
+
+.jobFilingPnt {
+  position: relative;
+  top: 3px;
+  height: 12px;
+  width: 12px;
+  background-color: #FFAA00;
+  border-radius: 50%;
+  display: inline-block;
+}
+.adjacentPnt {
+  position: relative;
+  top: 3px;
+  height: 12px;
+  width: 12px;
+  background-color: #76B7B2;
+  border-radius: 50%;
+  display: inline-block;
+}
+.insideLotPnt {
+  position: relative;
+  top: 3px;
+  height: 12px;
+  width: 12px;
+  background-color: #E15759;
+  border-radius: 50%;
+  display: inline-block;
+}
+.legend_label{
+	padding-left: 10px;
+	font-size: 12px;
+	display: inline-block;
+}
+.jobFilingClass{
+	fill: #FFAA00;
+	fill-opacity: .7;
+}
+.adjacentBinClass{
+	fill: #76B7B2;
+	fill-opacity: .7;
+}
+.insideLotClass{
+	fill: #E15759;
+	fill-opacity: .7;
+}
+
+<!-- .responsive-container{ -->
+    <!-- position: relative; -->
+    <!-- overflow: hidden; -->
+    <!-- padding-top: 56.25%; -->
+<!-- } -->
+<!-- .responsive-iframe{ -->
+    <!-- position: absolute; -->
+    <!-- top: 0; -->
+    <!-- left: 0; -->
+    <!-- width: 100%; -->
+    <!-- height: 100%; -->
+    <!-- border: 0; -->
+<!-- } -->
+
+</style>
+<body>
+<div class="container">
+			<div class="navbar navbar-fixed-top" role="navigation" style="color:white;background-color:RGB(40,56,124);">
+			<a class="logo" href="https://www1.nyc.gov/site/buildings/about/covid-19-response.page" target="_blank"> </a>
+				<div class="nav navbar-nav" style="margin-left:15px;margin-top: 5px;font-size:28px;font-weight:bold;text-align:center;">
+					Engineering Coordination: A1 Horizontal & Vertical Enlargements
+				</div>
+			</div>
+</div>
+<div class="container-fluid dobmain" style="margin-top:20px;">
+	<div class="row">
+		  <div class="col-lg-9" style="height:89vh">
+			  <div class="chart-stage" id="map-container" style="border:1px solid black;height:100%;width:100%">
+				<div id="map">
+					<div id="ui-container" class="ui" style="z-index: 401">		
+						<h4><u>BIN DESCRIPTION</u></h4>						  
+						<span class="jobFilingPnt"></span><span class="legend_label">JOB FILING</span>							
+						<br/>		
+						<span class="adjacentPnt"></span><span class="legend_label">BIN ADJACENT TO A1 LOT</span>
+						<br/>		
+						<span class="insideLotPnt"></span><span class="legend_label">ADDITIONAL BIN INSIDE A1 LOT</span>
+					</div>
+				</div>
+			  </div>
+		  </div>
+			  <div class="col-lg-3" style="height:49vh">
+				<div class="newchart" style="padding:5px 5px 0px 5px;border:1px solid black;height:100%;width:100%">
+				  <div class="" id="">
+					<table id="riskTable" class="">
+						<thead>
+							<tr>
+								<th></th>
+								<th>HOUSE NUMBER</th>
+								<th>STREET</th>
+								<th>BOROUGH</th>
+								<th>BIN</th>
+								<th>BIN DESCRIPTION</th>
+								<th>NUMBER</th>
+								<th>JOB NUMBER</th>
+								<th>PRIMARY BIN</th>
+								<th>DOC NUMBER</th>
+								<th>BLOCK</th>
+								<th>LOT</th>
+								<th>JOB TYPE</th>
+								<th>HPD CLASSIFICATION</th>
+								<th>DHCR FLAG</th>
+								<th>CSE ENG. ACTION - 7/31</th>
+								<th>CEU ACTION - 7/31</th>
+								<th>FEU ACTION - 7/31</th>
+								<th>UB FLAG - 7/31</th>
+								<th>FULL VACATE FLAG - 7/31</th>
+							</tr>
+						</thead>			
+					</table>
+				  </div>
+				</div>
+			  </div>
+			  
+			  
+			<!-- <div class="row"> -->
+				<!-- <div class="col-lg-3" style="height:37vh; margin-top:15px;"> -->
+					<!-- <div id="cycloText" style="font-size:15px; font-weight:bold;">CLICK ON A MAP POINT TO VIEW CYCLOMEDIA IMAGE BELOW</div> -->
+					<!-- <div class="cycloMedia" style="padding:5px 5px 0px 5px;border:1px solid black;height:100%;width:100%"> -->
+						<!-- <div class="" id="cycloImage"> -->
+						
+							<!-- <iframe id="cyclo" width="100%" height="440px" scrolling="no" style="overflow:hidden;" frameborder="0" ></iframe> -->
+							
+							
+							
+						<!-- </div> -->
+						
+					<!-- </div> -->
+
+				<!-- </div> -->
+			<!-- </div> -->
+			
+			<div class="zrow">
+				<div class="col-lg-3" style="height:37vh; margin-top:15px;zzzborder:1px solid black;">
+					<div id="cycloText" style="font-size:12px; font-weight:bold;">CLICK ON A MAP POINT TO VIEW CYCLOMEDIA IMAGE BELOW</div>						
+						<iframe id="cyclo" style="height:93%;width:100%;border:1px solid black;"></iframe>
+				</div>
+			</div>
+			  
+			  
+			  
+			  
+			  
+			  
+	</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.9/d3.min.js"></script>
+<!-- <script src="https://nycdob.github.io/EssentialActiveConstruction/Leaflet.D3SvgOverlay-master/L.D3SvgOverlay.min.js"></script> -->
+<script src="Leaflet.D3SvgOverlay-master/L.D3SvgOverlay.min.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.12/r-2.1.0/se-1.2.0/datatables.min.js"  type="text/javascript" charset="utf8" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/rowgroup/1.1.1/js/dataTables.rowGroup.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.20/api/fnSortNeutral.js"></script>
+<script>
+
+$(document).ready(function(){
+	var today = new Date();
+	var dd = today.getDate();
+	var mm = today.getMonth()+1;
+	var yyyy = today.getFullYear();
+	today = mm + '/' + dd + '/' + yyyy;	
+	d3.select("#today").html(today);
+	var latlong = [];
+	var xy = [];
+	var addressText = [];
+	var selection = [];
+	var cycloProperty;
+    L.Control.include({
+      _refocusOnMap: L.Util.falseFn // Do nothing.
+    });	
+
+<!-- function cycloCoordinates(xy){ -->
+	<!-- cycloProperty = "https://nycdob.github.io/CycloMedia/simple#" + xy; -->
+	<!-- document.getElementById("cyclo").setAttribute("src", cycloProperty); -->
+<!-- } -->
+	
+
+function cycloCoordinates(xy){
+	cycloProperty = "https://nycdob.github.io/CycloMedia/simple#" + xy;
+	var iframeElement = document.getElementById("cyclo");
+	iframeElement.src = "about:blank";
+	iframeElement.contentWindow.document.open();
+	iframeElement.contentWindow.document.write(cycloProperty);
+	iframeElement.contentWindow.document.close();
+	iframeElement.setAttribute("src", cycloProperty);
+	
+}
+
+function propertyText(text){
+	document.getElementById("cycloText").innerHTML = text;
+}
+
+var map = L.map('map').setView([40.713312, -73.977407], 14);
+L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+<!-- L.tileLayer('http://{s}.sm.mapstack.stamen.com/(toner-lite,$fff[difference],$fff[@23],$fff[hsl-saturation@20])/{z}/{x}/{y}.png', {attribution: '© <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'}).addTo(map); -->
+var tooltip = d3.select('#map').append('div')//var tooltip = d3.select('body').append('div')
+	.on('mouseover', function(d, i){
+		tooltip.transition().duration(0);
+	})
+	.on('mouseout', function(d, i){
+		tooltip.transition().delay(500).style('visibility', 'hidden');
+	})
+	.attr('class', 'tooltip');
+var width = $("#map").width(),
+	height = $("#map").height(),
+	points = [],
+	table_map = [],
+	filteredData,
+	latLngs = [];	
+	var pointsOverlay = L.d3SvgOverlay(function(sel,proj){
+	var pointsUpd = sel.selectAll('circle').data(points);	
+	pointsUpd.enter()
+		.append('circle')		
+		.attr("bin",function(d){return d.Bin})
+		.attr('cx',function(d){return proj.latLngToLayerPoint(d.latLng).x;})
+		.attr('cy',function(d){return proj.latLngToLayerPoint(d.latLng).y;})
+		<!-- .attr('class', function(d){ -->
+			<!-- return "point"; -->
+		<!-- }) -->
+		.attr('class', function(d){
+			if (d.BinDescription == "Job Filing"){
+				return "jobFilingClass";
+			}   else if (d.BinDescription == "BIN Adjacent to A1 Lot"){
+				return "adjacentBinClass";
+			}
+				return "insideLotClass";
+		})
+		
+		.on('click', function(d){
+		
+			if(d3.select(this).style("fill-opacity") != 0){
+				tooltip.style("visibility", "visible");
+				tooltip.html(
+					'BIN (BIS Link): ' + '<a href= "http://dob-bisweb.buildings.nycnet/bisweb-intra/PropertyProfileOverviewServlet?bin=' + d.Bin + '&go4=+GO+&requestid=0" target="_blank">' + d.Bin + '</a>' + '</br>' +							
+					'BIN Description: ' + [d.BinDescription] + '</br>' +
+					'CycloMedia: ' + '<a href="' + [d.CycloMedia] + '" target="_blank">Full Page Image</a>' + '</br>' +
+					'#: ' + [d.Num] + '</br>' +
+					'Job Number: ' + [d.JobNumber] + '</br>' +
+					'Primary BIN: ' + [d.PrimaryBIN] + '</br>' +
+					'Doc Number: ' + [d.DocNum] + '</br>' +
+					'House Number: ' + [d.HouseNum] + '</br>' +
+					'Street: ' + [d.StreetName] + '</br>' +
+					'Boro: ' + [d.Borough] + '</br>' +
+					'Block: '+ [d.Block] + '</br>' +
+					'Lot: ' + [d.Lot] + '</br>' +
+					'Job Type: ' + [d.JobType] + '</br>' +
+					'HPD Classification: ' + [d.HPD_Class] + '</br>' +
+					'DHCR Flag: ' + [d.DHCR_Flag] + '</br>' +
+					'CSE Eng. Action - 7/31: ' + [d.CSE_EngAction_0731] + '</br>' +
+					'CEU Action - 7/31: ' + [d.CEU_Action_0731] + '</br>' +
+					'FEU Action - 7/31: ' + [d.FEU_Action_0731] + '</br>' +
+					'UB Flag - 7/31: ' + [d.UB_Flag_0731] + '</br>' +
+					'Full Vacate Flag - 7/31: ' + [d.FullVacateFlag_0731] 
+					
+				)
+				if (d3.event.pageX > (width - 200)) {
+				   tooltip.style("left", (d3.event.pageX - 350) + "px");
+				} else {
+				   tooltip.style("left", (d3.event.pageX + 20) + "px")
+						.style("top", (d3.event.pageY -30) + "px");
+				}
+				if (d3.event.pageY > (height - 150)) {
+				   tooltip.style("top", (d3.event.pageY -100) + "px");
+				} else {
+				   tooltip.style("top", (d3.event.pageY -30) + "px");
+				}
+			}
+			
+			addressText = [[d.HouseNum] + ' ' + [d.StreetName] + ', ' + [d.Borough]];
+			propertyText(addressText);
+			xy = [+d.X,+d.Y];
+			cycloCoordinates(xy);	
+			
+		})
+		.on("mouseover", function(d, i){
+			tooltip.transition().duration(0); 
+			$(this).attr("style", "cursor: pointer; fill: #eef442; fill-opacity: 1;");			
+		})
+		.on("mouseout", function(d, i){			
+			$(this).attr("style", "stroke-width: 0px; fill-opacity: .7;");
+			return tooltip.transition().delay(500).style("visibility", "hidden");
+		});
+		//pointsUpd.attr('r', 5 / proj.scale);
+		pointsUpd.attr('r', function(d){
+			if (d.BinDescription == "Job Filing"){
+				return (7 / proj.scale);
+			} 
+				return (5 / proj.scale);
+		})
+		
+
+	});
+	//d3.csv("https://raw.githubusercontent.com/NYCDOB/LL104/gh-pages/data/LL04_properties.csv",function(data){
+	d3.csv("data/EngineeringCoordination_A1.csv",function(data){
+				points = data.map(function(d){
+				d.latLng = [+d.Lat,+d.Long];
+				d.xy = [+d.X,+d.Y];
+				d.bin = [d.Bin];				
+				d.HouseNum = [d.HouseNum];
+				d.StreetName = [d.StreetName];
+				d.Borough = [d.Borough];
+				d.Block = [d.Block];
+				d.Lot = [d.Lot];
+				d.HPD_Class = [d.HPD_Class];
+				d.Num = [d.Num];
+				d.JobNumber = [d.JobNumber];
+				d.PrimaryBIN = [d.PrimaryBIN];
+				d.DocNum = [d.DocNum];
+				d.JobType = [d.JobType];
+				d.DHCR_Flag = [d.DHCR_Flag];
+				d.BinDescription = [d.BinDescription];
+				d.CSE_EngAction_0731 = [d.CSE_EngAction_0731];
+				d.CEU_Action_0731 = [d.CEU_Action_0731];
+				d.FEU_Action_0731 = [d.FEU_Action_0731];
+				d.UB_Flag_0731 = [d.UB_Flag_0731];
+				d.FullVacateFlag_0731 = [d.FullVacateFlag_0731];
+				d.CycloMedia = [d.CycloMedia];
+			return d;
+			});
+		pointsOverlay.addTo(map);
+		
+	});
+	
+
+	
+	function highlightPoint(layerID){
+		console.log(layerID);
+		d3.selectAll(".point")
+			.style("fill-opacity", function(d){
+				if(d.Bin == layerID){return "0.7"}
+				else{return "0"};
+			})
+	}
+	function zoomToSelected(latlong){
+			map.setView(latlong,17);
+	}	
+	
+
+	function zoomFullExtent(){
+		map.setView([40.713312, -73.977407], 14);
+		var u2=document.querySelector(".zoomedPoint");
+		if (u2) {
+			u2.className.baseVal = u2.className.baseVal.replace(/\bzoomedPoint\b/g, "");
+		}
+	}
+	map.on('resize', function(){
+		map.invalidateSize();		
+	});
+	
+		
+	function format ( d ) {
+		return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+			'<tr>'+
+				'<td>BIN (BIS Link):</td>'+
+				'<td>'+'<a href= "http://dob-bisweb.buildings.nycnet/bisweb-intra/PropertyProfileOverviewServlet?bin=' + d.Bin + '&go4=+GO+&requestid=0" target="_blank">' + d.Bin + '</a>'+'</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>BIN Description:</td>'+
+				'<td>'+[d.BinDescription]+'</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>CycloMedia:</td>'+
+				'<td>'+'<a href="' + [d.CycloMedia] + '" target="_blank">Full Page Image</a>'+'</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>#:</td>'+
+				'<td>'+[d.Num]+'</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>Job Number:</td>'+
+				'<td>'+[d.JobNumber]+'</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>Primary BIN:</td>'+
+				'<td>'+[d.PrimaryBIN]+'</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>Doc Number:</td>'+
+				'<td>'+[d.DocNum]+'</td>'+
+			'</tr>'+			
+			'<tr>'+
+				'<td>Block:</td>'+
+				'<td>'+[d.Block]+'</td>'+
+			'</tr>'+
+
+			'<tr>'+
+				'<td>Lot:</td>'+
+				'<td>'+[d.Lot]+'</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>Job Type:</td>'+
+				'<td>'+[d.JobType]+'</td>'+
+			'</tr>'+
+
+			'<tr>'+
+				'<td>HPD Class:</td>'+
+				'<td>'+[d.HPD_Class]+'</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>DHCR Flag:</td>'+
+				'<td>'+[d.DHCR_Flag]+'</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>CSE Eng. Action - 7/31:</td>'+
+				'<td>'+[d.CSE_EngAction_0731]+'</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>CEU Action - 7/31:</td>'+
+				'<td>'+[d.CEU_Action_0731]+'</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>FEU Action - 7/31:</td>'+
+				'<td>'+[d.FEU_Action_0731]+'</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>UB Flag - 7/31:</td>'+
+				'<td>'+[d.UB_Flag_0731]+'</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>Full Vacate Flag - 7/31:</td>'+
+				'<td>'+[d.FullVacateFlag_0731]+'</td>'+
+			'</tr>'+
+			
+		'</table>';
+	}	
+	function zoom(lat,lon){
+		map.panTo(new L.LatLng(lat,lon));
+	}
+	
+	$(function(){
+		var table = $('#riskTable').DataTable({
+
+				"ajax": {
+					//"url": "https://raw.githubusercontent.com/NYCDOB/LL04/gh-pages/data/LL104_properties.json",
+					"url": "data/EngineeringCoordination_A1.json",
+					"dataSrc": ""
+				},
+				order: [[3, "asc"], [1, "asc"], [2, "asc"]],
+				lengthChange: false,
+				//"scrollY": "70vh",
+				"scrollY": "42vh",
+				"scrollCollapse": true,
+				"paging": false,
+
+				columns: [
+					{
+						"className": 'details-control',
+						"orderable": false,
+						"data": null,
+						"defaultContent": ''
+					},
+					{	data: "HouseNum"
+					},
+					{	data: "StreetName"
+					},
+					{ 	data: "Borough"
+					},
+					{	data:"Bin", "visible":false
+					},
+					{	data:"BinDescription", "visible":false
+					},
+					{	data:"Num", "visible":false
+					},
+					{	data:"JobNumber", "visible":false
+					},
+					{	data:"PrimaryBIN", "visible":false
+					},
+					{	data:"DocNum", "visible":false
+					},
+					{	data:"Block", "visible":false
+					},
+					{	data:"Lot", "visible":false
+					},
+					{	data:"JobType", "visible":false
+					},
+					{	data:"HPD_Class", "visible":false
+					},
+					{	data:"DHCR_Flag", "visible":false
+					},
+					{	data:"CSE_EngAction_0731", "visible":false
+					},
+					{	data:"CEU_Action_0731", "visible":false
+					},
+					{	data:"FEU_Action_0731", "visible":false
+					},
+					{	data:"UB_Flag_0731", "visible":false
+					},
+					{	data:"FullVacateFlag_0731", "visible":false
+					}
+				],
+				
+				"dom": 'fBrt',
+				"buttons": [		   
+					{ extend: 'csv',
+					titleAttr: 'Download to CSV',
+					filename: "EngineeringCoordination_A1",
+					className: "filterTableButton",
+					text: '<i class="fa fa-download" aria-hidden="true"></i>',
+					exportOptions: {modifier: {search: 'none'},columns: 'th:not(:first-child)'}}
+					
+					
+				]
+
+				
+			});
+		
+		$('#riskTable tbody').on( 'click', 'tr', function () {
+			if ( $(this).hasClass('selected') ) {
+				$(this).removeClass('selected');			
+			d3.selectAll('.point')
+				.style("fill-opacity", function(d){
+					return "0.7";
+				});	
+			zoomFullExtent();
+			}
+			else {
+				table.$('tr.selected').removeClass('selected');
+				$(this).addClass('selected');
+				
+			for (var i=0; i < table.rows('.selected').data().length; i++){
+				<!-- var selectedRecord = table.rows('.selected').data()[i].Address; -->
+				var selectedRecord = table.rows('.selected').data()[i].Bin;
+				var lat = table.rows('.selected').data()[i].Lat;
+				var lon = table.rows('.selected').data()[i].Long;
+				latlong = [lat,lon];
+				console.log(selectedRecord);
+				<!-- var xCoord = table.rows('.selected').data()[i].X; -->
+				<!-- var yCoord = table.rows('.selected').data()[i].Y; -->
+				<!-- var xyCoord = [xCoord,yCoord]; -->
+				<!-- var addr = table.rows('.selected').data()[i].HouseNum; -->
+				<!-- var str = table.rows('.selected').data()[i].Street; -->
+				<!-- var boro = table.rows('.selected').data()[i].Boro; -->
+				<!-- var addressTxt = [addr +' '+ str +', '+ boro] -->
+				}
+				highlightPoint(selectedRecord);	
+				zoomToSelected(latlong);
+				//cycloCoordinates(xyCoord);
+				//propertyText(addressTxt);
+				
+			}
+		});
+
+				
+		// Add event listener for opening and closing details
+		$('#riskTable tbody').on('click', 'td.details-control', function () {
+			var tr = $(this).closest('tr');
+			var row = table.row( tr );
+			if ( row.child.isShown() ) {
+				// This row is already open - close it
+				row.child.hide();
+				tr.removeClass('shown');
+			}
+			else {
+				// Open this row
+				row.child( format(row.data()) ).show();
+				tr.addClass('shown');
+			}
+		});
+	});	
+	
+
+	
+});	
+</script>
+</body>
+</html>
